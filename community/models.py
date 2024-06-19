@@ -1,18 +1,17 @@
 from dataclasses import dataclass
 from typing import List
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy_serializer import SerializerMixin
 
 db = SQLAlchemy()
 
 @dataclass
-class Comment(db.Model,SerializerMixin):
+class Comment(db.Model):
     id:int = db.Column(db.Integer, primary_key=True)
     content:str = db.Column(db.Text)
     post_id:int = db.Column(db.Integer, db.ForeignKey('post.id'))
 
 @dataclass
-class Post(db.Model,SerializerMixin):
+class Post(db.Model):
     __allow_unmapped__ = True
     id:int = db.Column(db.Integer, primary_key=True)
     title:str = db.Column(db.String(100))
