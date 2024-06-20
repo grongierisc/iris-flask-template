@@ -2,10 +2,12 @@
 from flask import Flask, jsonify, request
 from models import Comment, Post, init_db
 
+from grongier.pex import Director
+
 import iris
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'iris://SuperUser:SYS@localhost:59942/USER'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'iris+emb://IRISAPP'
 
 db = init_db(app)
 
@@ -22,6 +24,19 @@ def iris_query():
     for row in rs:
         result.append(row)
     return jsonify(result)
+
+########################
+# IRIS interop example #
+########################
+bs = Director.create_python_business_service('BS')
+
+@app.route('/interop', methods=['GET', 'POST', 'PUT', 'DELETE'])
+def interop():
+    
+    rsp = bs.on_process_input(request)
+
+    return jsonify(rsp)
+
 
 ############################
 # CRUD operations comments #
