@@ -15,9 +15,10 @@ ENV PATH "/home/irisowner/.local/bin:/usr/irissys/bin:/usr/local/sbin:/usr/local
 
 COPY . .
 
-# RUN pip3 install -r requirements.txt
-
 USER root
+
+# Remove EXTERNAL-MANAGER from the system
+RUN rm -f /usr/lib/python3.12/EXTERNALLY-MANAGED
 
 # Update package and install sudo
 RUN apt-get update && apt-get install -y \
@@ -28,6 +29,8 @@ RUN apt-get update && apt-get install -y \
 	sudo -u ${ISC_PACKAGE_MGRUSER} sudo echo enabled passwordless sudo-ing for ${ISC_PACKAGE_MGRUSER}
 
 USER ${ISC_PACKAGE_MGRUSER}
+
+RUN pip3 install -r requirements.txt
 
 # change the entrypoint to run iris and the python script
 #ENTRYPOINT [ "/irisdev/app/entrypoint.sh" ]
