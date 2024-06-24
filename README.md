@@ -100,6 +100,32 @@ The use of the `__allow_unmapped__` attribute is necessary to allow the creation
 
 `dataclasses` are used to help with the serialization of the objects to JSON.
 
+The `init_db` function initializes the database with the Flask application.
+
+```python
+def init_db(app):
+    db.init_app(app)
+
+    with app.app_context():
+        db.drop_all()
+        db.create_all()
+        # Create fake data
+        post1 = Post(title='Post The First', content='Content for the first post')
+        ...
+        db.session.add(post1)
+        ...
+        db.session.commit()
+    return db
+```
+
+- `db.init_app(app)`: Initialize the database with the Flask application.
+- `with app.app_context()`: Create a context for the application.
+- `db.drop_all()`: Drop all the tables in the database.
+- `db.create_all()`: Create all the tables in the database.
+- Create fake data for the application.
+- return the database object.
+
+
 ### `/iris` endpoint
 
 ```python
@@ -222,6 +248,10 @@ docker exec -it iris-flask-template bash
 ### Restart the application in IRIS
 
 Be in `DEBUG` mode make multiple calls to the application, and the changes will be reflected in the application.
+
+### How to access the IRIS Management Portal
+
+You can access the IRIS Management Portal by going to `http://localhost:53795/csp/sys/UtilHome.csp`.
 
 ### Run this template locally
 
