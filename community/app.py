@@ -2,7 +2,7 @@
 from flask import Flask, jsonify, request
 from models import Comment, Post, init_db
 
-from grongier.pex import Director
+from iop import Director
 
 import iris
 
