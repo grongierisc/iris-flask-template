@@ -49,7 +49,7 @@ This is the main file of the application. It contains the Flask application and 
 from flask import Flask, jsonify, request
 from models import Comment, Post, init_db
 
-from grongier.pex import Director
+from iop import Director
 
 import iris
 
@@ -61,7 +61,7 @@ db = init_db(app)
 
 - `from flask import Flask, jsonify, request`: Import the Flask library.
 - `from models import Comment, Post, init_db`: Import the models and the database initialization function.
-- `from grongier.pex import Director`: Import the Director class to bind the flask app to the IRIS interoperability framework.
+- `from iop import Director`: Import the Director class to bind the flask app to the IRIS interoperability framework.
 - `import iris`: Import the IRIS library.
 - `app = Flask(__name__)`: Create a Flask application.
 - `app.config['SQLALCHEMY_DATABASE_URI'] = 'iris+emb://IRISAPP'`: Set the database URI to the IRISAPP namespace.
