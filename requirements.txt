@@ -1,13 +1,11 @@
-flask>=2.0.0
-flask-sqlalchemy
+flask==3.0.3
+flask-sqlalchemy==3.1.1
 
 ## iris community package
-# db-api
-intersystems_iris @ https://github.com/intersystems-community/intersystems-irispython/releases/download/3.7.7/intersystems_iris-3.7.7-py3-none-any.whl
 # sqlalchemy-iris
-sqlalchemy_iris
+sqlalchemy_iris>=0.20.0
 # iop - interoperability on python
-iris-pex-embedded-python>=2.0.0
+iris-pex-embedded-python==4.0.0b14
 
 ## for testing
-pytest
+pytest==8.3.2

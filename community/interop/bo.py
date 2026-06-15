@@ -3,15 +3,25 @@ import dataclasses
 
 from iop import BusinessOperation
 
-from msg import HttpMessageRequest, HttpMessageResponse
+from interop.msg import HttpMessageRequest, HttpMessageResponse
 
 class BO(BusinessOperation):
     def on_http_request(self, message_request: HttpMessageRequest)->HttpMessageResponse:
-        # Create a new response
-        # Where the body contains the a json with the message_request attributes
-        response = HttpMessageResponse(
-            status=200,
-            headers={'Content-Type': 'application/json'},
-            body=json.dumps(dataclasses.asdict(message_request))
-        )
-        return response
+        try:
+            payload = dataclasses.asdict(message_request)
+            response = HttpMessageResponse(
+                status=200,
+                headers={'Content-Type': 'application/json'},
+                body=json.dumps(payload),
+            )
+            return response
+        except Exception as exc:
+            self.log_error(f"BO.on_http_request failed: {exc}")
+            return HttpMessageResponse(
+                status=500,
+                headers={'Content-Type': 'application/json'},
+                body=json.dumps({
+                    'error': 'bo_processing_failed',
+                    'detail': str(exc)
+                }),
+            )

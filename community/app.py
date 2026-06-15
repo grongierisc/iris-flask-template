@@ -1,5 +1,9 @@
 
-from flask import Flask, jsonify, request
+import json
+from typing import Any
+
+from flask import Flask, jsonify, make_response, request
+
 from models import Comment, Post, init_db
 
 from iop import Director
@@ -28,14 +32,34 @@ def iris_query():
 ########################
 # IRIS interop example #
 ########################
-bs = Director.create_python_business_service('BS')
+_bs: Any = None
+
+
+def get_business_service() -> Any:
+    global _bs
+    if _bs is None:
+        _bs = Director.create_python_business_service('BS')
+    return _bs
 
 @app.route('/interop', methods=['GET', 'POST', 'PUT', 'DELETE'])
 def interop():
-    
-    rsp = bs.on_process_input(request)
+    try:
+        rsp = get_business_service().process_input(request)
+    except Exception as exc:
+        payload = {
+            "error": "interop_unavailable",
+            "detail": str(exc)
+        }
+        return make_response(jsonify(payload), 503)
 
-    return jsonify(rsp)
+    status = getattr(rsp, 'status', 200)
+    headers = getattr(rsp, 'headers', {}) or {}
+    body = getattr(rsp, 'body', rsp)
+
+    response = make_response(body, int(status))
+    for key, value in headers.items():
+        response.headers[key] = value
+    return response
 
 
 ############################
@@ -63,6 +87,8 @@ def get_comment(id):
 @app.route('/comments/<int:id>', methods=['PUT'])
 def update_comment(id):
     comment = Comment.query.get(id)
+    if comment is None:
+        return make_response(jsonify({"error": "comment_not_found"}), 404)
     data = request.get_json()
     comment.content = data['content']
     db.session.commit()
@@ -100,6 +126,8 @@ def get_post(id):
 @app.route('/posts/<int:id>', methods=['PUT'])
 def update_post(id):
     post = Post.query.get(id)
+    if post is None:
+        return make_response(jsonify({"error": "post_not_found"}), 404)
     data = request.get_json()
     post.title = data['title']
     post.content = data['content']
